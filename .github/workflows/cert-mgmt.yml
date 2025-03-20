@@ -32,4 +32,5 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: echo ${{ github.event.inputs.env }} Hello, world!
+        run: |
+          echo "ENV: ${{ github.event.inputs.env }}"
