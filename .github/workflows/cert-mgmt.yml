@@ -46,6 +46,7 @@ jobs:
 
       # run a bicep deployment
       - name: Generate Let's Encrypt Certificate
+        id: generate-cert
         env:
             AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
             AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -58,3 +59,10 @@ jobs:
             -ResourceGroupName "rg-ad-dns" `
             -DnsZoneName "alexdantico.com"
         shell: pwsh
+
+      - name: Use Certificate in Next Step
+        run: |
+          echo "Certificate is at: ${{ steps.generate-cert.outputs.cert_path }}"
+          # Use the certificate file directly in your next step
+          # For example, you could upload it to Key Vault:
+          az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file ${{ steps.generate-cert.outputs.cert_path }}
