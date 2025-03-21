@@ -34,9 +34,14 @@ $account = New-PAAccount -Contact $Email -AcceptTOS
 
 # Configure the Azure DNS plugin parameters 
 # Note: We don't need to pass credentials since we're using the GitHub Actions Azure login
+$azContext = (az account show | ConvertFrom-Json)
+$subscriptionId = $azContext.id
+$tenantId = $azContext.tenantId
+
+# Configure the Azure DNS plugin parameters
 $pluginParams = @{
-    AZSubscriptionId = (Get-AzContext).Subscription.Id
-    AZTenantId = (Get-AzContext).Tenant.Id
+    AZSubscriptionId = $subscriptionId
+    AZTenantId = $tenantId
     AZResourceGroup = $ResourceGroupName
     AZZoneName = $DnsZoneName
 }
