@@ -47,7 +47,7 @@ jobs:
       # run a bicep deployment
       - name: Generate Let's Encrypt Certificate
         run: |
-          ./your-script.ps1 `
+          ./scripts/create-lets-encrypt-cert.ps1 `
             -Email "alex@alexdantico.com" `
             -Domain "test.alexdantico.com" `
             -PfxPassword "securePassword123" `
