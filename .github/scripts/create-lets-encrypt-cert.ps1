@@ -66,6 +66,9 @@ $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginPa
 Write-Output $cert
 # Export the certificate to a PFX file
 
-Write-Output Get-Content -Path $cert.FullChainFile -Raw
+$pfxFullChainPath = $cert.PfxFullChain
+$certContent = Get-Content -Path $cert.FullChainFile -Raw
 
-Write-Output "Full Chain certificate generated fo $Domain and saved to $cert.PfxFullChain"
+Write-Output $certContent
+
+Write-Output "Full Chain certificate generated fo $Domain and saved to $pfxFullChainPath
