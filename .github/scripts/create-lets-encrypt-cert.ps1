@@ -48,10 +48,8 @@ $clientId = $env:AZURE_CLIENT_ID
 Write-Output $clientId
 
 Write-Output "GGGGGGGGGGGGGGGGGGGGGGGG"
-
-# Create a credential object
-$securePassword = ConvertTo-SecureString $env:AZURE_CLIENT_SECRET -AsPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential($clientId, $securePassword)
+az account list
+$token = (az account get-access-token --resource 'https://management.core.windows.net/' | ConvertFrom-Json).accessToken
 
 # Configure the Azure DNS plugin parameters
 $pluginParams = @{
@@ -59,7 +57,7 @@ $pluginParams = @{
     AZTenantId = $tenantId
     AZResourceGroup = $ResourceGroupName
     AZZoneName = $DnsZoneName
-    AZAppCred = $credential
+    AZAccessToken = $token
 }
 
 Write-Output "AAAAAAAAAAAAAAAAAAAAAA"
