@@ -54,9 +54,6 @@ $token = (az account get-access-token --resource 'https://management.core.window
 # Configure the Azure DNS plugin parameters
 $pluginParams = @{
     AZSubscriptionId = $subscriptionId
-    AZTenantId = $tenantId
-    AZResourceGroup = $ResourceGroupName
-    AZZoneName = $DnsZoneName
     AZAccessToken = $token
 }
 
