@@ -36,11 +36,6 @@ jobs:
       - name: Run a one-line script
         run: |
           echo "ENV: ${{ github.event.inputs.env }}"
-
-      - name: Install Az PowerShell module
-        shell: pwsh
-        run: |
-          Install-Module -Name Az -Force -AllowClobber -Scope CurrentUser
           
       - name: Azure Login
         uses: azure/login@v1
