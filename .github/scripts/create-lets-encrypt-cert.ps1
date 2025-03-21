@@ -72,3 +72,5 @@ $certContent = Get-Content -Path $cert.FullChainFile -Raw
 Write-Output $certContent
 
 Write-Output "Full Chain certificate generated fo $Domain and saved to $pfxFullChainPath"
+
+Write-Output "::set-output name=cert_path::$pfxFullChainPath"
