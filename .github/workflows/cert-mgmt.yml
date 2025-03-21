@@ -46,6 +46,9 @@ jobs:
 
       # run a bicep deployment
       - name: Generate Let's Encrypt Certificate
+        env:
+            AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+            AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         run: |
           ./.github/scripts/create-lets-encrypt-cert.ps1 `
             -Email "alex@alexdantico.com" `
