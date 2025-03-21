@@ -27,7 +27,7 @@ if (-not (Get-Module -ListAvailable -Name Posh-ACME)) {
 Import-Module Posh-ACME
 
 # Set the Let's Encrypt server to use
-Set-PAServer LE_PROD
+Set-PAServer LE_STAGE
 
 # Set the Posh-ACME configuration
 $account = New-PAAccount -Contact $Email -AcceptTOS
