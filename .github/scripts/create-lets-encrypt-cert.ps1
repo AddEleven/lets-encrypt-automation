@@ -18,6 +18,7 @@ param (
     [string]$DnsZoneName
 )
 
+Write-Output "BBBBBBBBBBBB"
 # Install the Posh-ACME module if not already installed
 if (-not (Get-Module -ListAvailable -Name Posh-ACME)) {
     Install-Module -Name Posh-ACME -Scope CurrentUser -Force
@@ -26,21 +27,27 @@ if (-not (Get-Module -ListAvailable -Name Posh-ACME)) {
 # Import the Posh-ACME module
 Import-Module Posh-ACME
 
+Write-Output "CCCCCCCCCCCCCCCC"
 # Set the Let's Encrypt server to use
 Set-PAServer LE_STAGE
 
+Write-Output "DDDDDDDDDDDDDDDDDDDDDD"
 # Set the Posh-ACME configuration
 $account = New-PAAccount -Contact $Email -AcceptTOS
 
+Write-Output "EEEEEEEEEEEEEEEEEEEEEEEE"
 # Configure the Azure DNS plugin parameters 
 # Note: We don't need to pass credentials since we're using the GitHub Actions Azure login
 $azContext = (az account show | ConvertFrom-Json)
 $subscriptionId = $azContext.id
 $tenantId = $azContext.tenantId
 
+Write-Output "FFFFFFFFFFFFFFFFF"
 $clientId = $env:AZURE_CLIENT_ID
 
 Write-Output $clientId
+
+Write-Output "GGGGGGGGGGGGGGGGGGGGGGGG"
 
 # Create a credential object
 $securePassword = ConvertTo-SecureString $env:AZURE_CLIENT_SECRET -AsPlainText -Force
