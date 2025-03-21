@@ -45,8 +45,13 @@ jobs:
            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       # run a bicep deployment
-      - name: run IaC
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az group list
+      - name: Generate Let's Encrypt Certificate
+        run: |
+          ./your-script.ps1 `
+            -Email "alex@alexdantico.com" `
+            -Domain "test.alexdantico.com" `
+            -PfxPassword "securePassword123" `
+            -ContactEmail "alex@alexdantico.com" `
+            -ResourceGroupName "rg-ad-dns" `
+            -DnsZoneName "alexdantico.com"
+        shell: pwsh
