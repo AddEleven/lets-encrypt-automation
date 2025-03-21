@@ -38,16 +38,29 @@ $azContext = (az account show | ConvertFrom-Json)
 $subscriptionId = $azContext.id
 $tenantId = $azContext.tenantId
 
+$spInfo = az ad signed-in-user show 2>$null | ConvertFrom-Json
+if (-not $spInfo) {
+    $spInfo = az ad sp show --id $env:AZURE_CLIENT_ID | ConvertFrom-Json
+}
+$clientId = $env:AZURE_CLIENT_ID
+
+# Create a credential object
+$securePassword = ConvertTo-SecureString $env:AZURE_CLIENT_SECRET -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential($clientId, $securePassword)
+
 # Configure the Azure DNS plugin parameters
 $pluginParams = @{
     AZSubscriptionId = $subscriptionId
     AZTenantId = $tenantId
     AZResourceGroup = $ResourceGroupName
     AZZoneName = $DnsZoneName
+    AZAppCred = $credential
 }
 
-# Create the certificate with DNS validation via Azure DNS
-Write-Output "Creating certificate for $Domain using Azure DNS for validation"
+Write-Output "AAAAAAAAAAAAAAAAAAAAAA"
+Write-Output $pluginParams
+
+Write-Output "Creating certificate for $Domain using Azure DNS for validation (STAGING ENVIRONMENT)"
 $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $PfxPassword -Verbose
 
 Write-Output $cert
