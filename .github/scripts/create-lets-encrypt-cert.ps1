@@ -38,11 +38,9 @@ $azContext = (az account show | ConvertFrom-Json)
 $subscriptionId = $azContext.id
 $tenantId = $azContext.tenantId
 
-$spInfo = az ad signed-in-user show 2>$null | ConvertFrom-Json
-if (-not $spInfo) {
-    $spInfo = az ad sp show --id $env:AZURE_CLIENT_ID | ConvertFrom-Json
-}
 $clientId = $env:AZURE_CLIENT_ID
+
+Write-Output $clientId
 
 # Create a credential object
 $securePassword = ConvertTo-SecureString $env:AZURE_CLIENT_SECRET -AsPlainText -Force
