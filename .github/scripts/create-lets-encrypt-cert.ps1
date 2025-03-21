@@ -45,6 +45,7 @@ $pluginParams = @{
 Write-Output "Creating certificate for $Domain using Azure DNS for validation"
 $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $PfxPassword -Verbose
 
+Write-Output $cert
 # Export the certificate to a PFX file
 $certPath = "$Domain.pfx"
 $cert.PfxBytes | Set-Content -Path $certPath -Encoding Byte
