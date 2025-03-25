@@ -54,7 +54,6 @@ jobs:
           ./.github/scripts/create-lets-encrypt-cert.ps1 `
             -Email "alex@alexdantico.com" `
             -Domain "blog.alexdantico.com" `
-            -PfxPassword "securePassword123" `
             -ContactEmail "alex@alexdantico.com" `
             -ResourceGroupName "rg-ad-dns" `
             -DnsZoneName "alexdantico.com"
