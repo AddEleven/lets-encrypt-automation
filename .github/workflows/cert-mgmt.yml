@@ -59,11 +59,23 @@ jobs:
             -DnsZoneName "alexdantico.com"
         shell: pwsh
 
-      - name: Use Certificate in Next Step
+      # In the step that generates the password:
+      - name: Generate certificate and password
+        id: print-cert
+        shell: pwsh
         run: |
-          echo "Certificate is at: ${{ steps.generate-cert.outputs.cert_path }}"
-          # Use the certificate file directly in your next step
-          # For example, you could upload it to Key Vault:
-          echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          echo ${{ steps.generate-cert.outputs.secure_password }}
-          #az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file ${{ steps.generate-cert.outputs.cert_path }} --password securePassword123
+          
+          # Convert to plain text for output (only do this when necessary!)
+          $plainPassword = [System.Net.NetworkCredential]::new('', ${{ steps.generate-cert.outputs.secure_password }}).Password
+          
+          # Output the plain text password - GitHub Actions will mask secrets automatically
+          Write-Output $plainPassword
+    
+      # - name: Use Certificate in Next Step
+      #   run: |
+      #     echo "Certificate is at: ${{ steps.generate-cert.outputs.cert_path }}"
+      #     # Use the certificate file directly in your next step
+      #     # For example, you could upload it to Key Vault:
+      #     echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      #     echo ${{ steps.generate-cert.outputs.secure_password }}
+      #     #az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file ${{ steps.generate-cert.outputs.cert_path }} --password securePassword123
