@@ -65,4 +65,6 @@ jobs:
           echo "Certificate is at: ${{ steps.generate-cert.outputs.cert_path }}"
           # Use the certificate file directly in your next step
           # For example, you could upload it to Key Vault:
-          az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file ${{ steps.generate-cert.outputs.cert_path }} --password securePassword123
+          echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          echo ${{ steps.generate-cert.outputs.secure_password }}
+          #az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file ${{ steps.generate-cert.outputs.cert_path }} --password securePassword123
