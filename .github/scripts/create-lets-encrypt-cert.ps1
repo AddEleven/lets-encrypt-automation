@@ -58,8 +58,8 @@ Write-Output "AAAAAAAAAAAAAAAAAAAAAA"
 Write-Output $pluginParams
 
 # Generate a 16-character password with all character types
-Add-Type -AssemblyName System.Web
-$securePassword = [System.Web.Security.Membership]::GeneratePassword(16, 4) | ForEach-Object { ConvertTo-SecureString -String $_ -AsPlainText -Force }
+$password = -join ((65..90) + (97..122) + (48..57) + (33..47) | Get-Random -Count 16 | ForEach-Object {[char]$_})
+$securePassword = ConvertTo-SecureString -String $password -AsPlainText -Force
 
 Write-Output "Creating certificate for $Domain using Azure DNS for validation (STAGING ENVIRONMENT)"
 # $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $securePassword -Verbose
