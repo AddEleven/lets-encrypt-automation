@@ -6,9 +6,6 @@ param (
     [string]$Domain,
 
     [Parameter(Mandatory=$true)]
-    [string]$PfxPassword,
-
-    [Parameter(Mandatory=$true)]
     [string]$ContactEmail,
 
     [Parameter(Mandatory=$true)]
@@ -29,7 +26,7 @@ Import-Module Posh-ACME
 
 Write-Output "CCCCCCCCCCCCCCCC"
 # Set the Let's Encrypt server to use
-Set-PAServer LE_PROD
+Set-PAServer LE_STAGE
 
 Write-Output "DDDDDDDDDDDDDDDDDDDDDD"
 # Set the Posh-ACME configuration
@@ -60,17 +57,22 @@ $pluginParams = @{
 Write-Output "AAAAAAAAAAAAAAAAAAAAAA"
 Write-Output $pluginParams
 
+# Generate a 16-character password with all character types
+$securePassword = [System.Web.Security.Membership]::GeneratePassword(16, 4) | ForEach-Object { ConvertTo-SecureString -String $_ -AsPlainText -Force }
+
 Write-Output "Creating certificate for $Domain using Azure DNS for validation (STAGING ENVIRONMENT)"
-$cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $PfxPassword -Verbose
+# $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $securePassword -Verbose
 
-Write-Output $cert
-# Export the certificate to a PFX file
+# Write-Output $cert
+# # Export the certificate to a PFX file
 
-$pfxFullChainPath = $cert.PfxFullChain
-$certContent = Get-Content -Path $cert.FullChainFile -Raw
+# $pfxFullChainPath = $cert.PfxFullChain
+# $certContent = Get-Content -Path $cert.FullChainFile -Raw
 
-Write-Output $certContent
+# Write-Output $certContent
 
-Write-Output "Full Chain certificate generated fo $Domain and saved to $pfxFullChainPath"
+# Write-Output "Full Chain certificate generated fo $Domain and saved to $pfxFullChainPath"
 
-Write-Output "::set-output name=cert_path::$pfxFullChainPath"
+# Write-Output "::set-output name=cert_path::$pfxFullChainPath"
+
+Write-Output "::set-output name=secure_password::$securePassword"
