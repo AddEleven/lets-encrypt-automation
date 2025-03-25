@@ -29,7 +29,7 @@ Import-Module Posh-ACME
 
 Write-Output "CCCCCCCCCCCCCCCC"
 # Set the Let's Encrypt server to use
-Set-PAServer LE_STAGE
+Set-PAServer LE_PROD
 
 Write-Output "DDDDDDDDDDDDDDDDDDDDDD"
 # Set the Posh-ACME configuration
