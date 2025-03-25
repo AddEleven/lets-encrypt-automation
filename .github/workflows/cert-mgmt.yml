@@ -66,7 +66,7 @@ jobs:
         run: |
           
           # Convert to plain text for output (only do this when necessary!)
-          $securePassword = ${{ steps.generate-cert.outputs.secure_password }}
+          $securePassword = "${{ steps.generate-cert.outputs.secure_password }}"
           #$plainPassword = [System.Net.NetworkCredential]::new('', $securePassword).Password
           
           # Output the plain text password - GitHub Actions will mask secrets automatically
