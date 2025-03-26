@@ -111,6 +111,7 @@ if ($cert) {
     Write-Error "Failed to generate certificate"
     exit 1
 }
+Start-Sleep -Seconds 30
 
 # Get all versions of the certificate except the latest
 $allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | 
@@ -118,6 +119,7 @@ $allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName 
     Sort-Object -Property attributes.created -Descending | 
     Select-Object -Skip 1
 
+Write-Output $allVersions
 # Disable all older versions (more efficient one-liner approach)
 foreach ($version in $allVersions) {
     $versionId = $version.id.Split('/')[-1]
