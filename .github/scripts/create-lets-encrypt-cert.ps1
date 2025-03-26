@@ -75,4 +75,8 @@ Write-Output "Creating certificate for $Domain using Azure DNS for validation (S
 
 # Write-Output "::set-output name=cert_path::$pfxFullChainPath"
 
-Write-Output "::set-output name=secure_password::$password"
+# First, mask the password value
+Write-Output "::add-mask::$password"
+
+# Then set the output using the recommended approach
+"secure_password=$password" >> $env:GITHUB_OUTPUT
