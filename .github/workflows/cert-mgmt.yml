@@ -56,7 +56,9 @@ jobs:
             -Domain "blog.alexdantico.com" `
             -ContactEmail "alex@alexdantico.com" `
             -ResourceGroupName "rg-ad-dns" `
-            -DnsZoneName "alexdantico.com"
+            -DnsZoneName "alexdantico.com" `
+            -KeyVaultName "kv-adtest-001" `
+            -CertificateName "blog-alexdantico-com"
         shell: pwsh
 
       # In the step that generates the password:
