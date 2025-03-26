@@ -76,7 +76,7 @@ Write-Output "Full Chain certificate generated fo $Domain and saved to $pfxFullC
 
 Write-Output "Importing to kv....."
 # First, mask the password value
-az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file ${{ steps.generate-cert.outputs.cert_path }} --password $password
+az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file $pfxFullChainPath --password $password
 az keyvault secret set --vault-name kv-adtest-001 --name blog-alexdantico-com-secret --value $password
 
 Write-Output "Done"
