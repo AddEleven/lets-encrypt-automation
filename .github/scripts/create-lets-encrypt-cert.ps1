@@ -67,6 +67,7 @@ try {
 Set-PAServer LE_STAGE
 
 # Set the Posh-ACME configuration
+Write-Output "AAAAAAAAAAAAAAAAAAAAAACOUNT"
 $account = New-PAAccount -Contact $Email -AcceptTOS -EA SilentlyContinue
 if (-not $account) {
     Write-Output "NOTTTTT ACCCOUNT"
