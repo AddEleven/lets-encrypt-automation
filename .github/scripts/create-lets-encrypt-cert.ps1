@@ -119,9 +119,10 @@ Start-Sleep -Seconds 60
 # Get the latest certificate directly
 $newCert = az keyvault certificate show --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
 $newCertThumbprint = $newCert.x509Thumbprint
+$versionId = $newCert.id.Split('/')[-1]
 
 Write-Output "New certificate thumbprint: $newCertThumbprint"
-Write-Output "New certificate id: $newCert.id.Split('/')[-1]"
+Write-Output "New certificate version ID: $versionId"
 
 # Get all versions
 $allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
