@@ -121,6 +121,7 @@ $newCert = az keyvault certificate show --vault-name $KeyVaultName --name $Certi
 $newCertThumbprint = $newCert.x509Thumbprint
 
 Write-Output "New certificate thumbprint: $newCertThumbprint"
+Write-Output "New certificate id: $newCert.id.Split('/')[-1]"
 
 # Get all versions
 $allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
