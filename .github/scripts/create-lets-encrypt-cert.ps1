@@ -86,40 +86,57 @@ $pluginParams = @{
 
 # Generate a random password for the certificate
 $password = -join ((65..90) + (97..122) + (48..57) + (33..47) | Get-Random -Count 16 | ForEach-Object {[char]$_})
+
 # Mask the password in logs
-Write-Output "::add-mask::$password"
-
-if ($certExists -and -not $needsRenewal) {
-    Write-Output "Certificate is up to date. No action needed."
-} else {
-    if ($certExists -and $needsRenewal) {
-        # Check if we have an existing certificate order in Posh-ACME
-        $existingOrder = Get-PAOrder -Domain $Domain -EA SilentlyContinue
-        
-        if ($existingOrder) {
-            Write-Output "Renewing existing certificate for $Domain"
-            $cert = Submit-Renewal -Domain $Domain -PfxPass $password -Verbose
-        } else {
-            Write-Output "No existing order found in Posh-ACME, creating new certificate for $Domain"
-            $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $password -Verbose
-        }
-    } else {
-        Write-Output "Creating new certificate for $Domain"
-        $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $password -Verbose
-    }
-
-    if ($cert) {
-        $pfxFullChainPath = $cert.PfxFullChain
-        
-        Write-Output "Importing certificate to Key Vault $KeyVaultName"
-        az keyvault certificate import --vault-name $KeyVaultName --name $CertificateName --file $pfxFullChainPath --password $password
-        az keyvault secret set --vault-name $KeyVaultName --name "$CertificateName-secret" --value $password
-
-        Write-Output "Certificate successfully imported to Key Vault"
-    } else {
-        Write-Error "Failed to generate or renew certificate"
-        exit 1
+# Check if a certificate for this domain already exists
+$existingOrder = $null
+$allOrders = Get-PAOrder
+foreach ($order in $allOrders) {
+    # Check the main name of the order
+    if ($order.MainDomain -eq $Domain) {
+        $existingOrder = $order
+        break
     }
 }
 
-Write-Output "Certificate management process completed"
+if ($existingOrder) {
+    Write-Output "Found existing certificate for $Domain, checking if renewal is needed..."
+    
+    # Select the existing order
+    Set-PAOrder -Order $existingOrder.OrderNumber
+    
+    # Check if renewal is needed (30 days before expiry is a good practice)
+    $cert = Get-PACertificate
+    $expiryDate = $cert.NotAfter
+    $renewalDate = $expiryDate.AddDays(-30)
+    
+    if ((Get-Date) -ge $renewalDate) {
+        Write-Output "Certificate expires on $expiryDate. Renewal needed."
+        # Submit renewal for the current order
+        $cert = Submit-Renewal -PfxPass $password -Verbose
+    } else {
+        Write-Output "Certificate still valid until $expiryDate. No renewal needed."
+        # We can still get the certificate data
+        $cert = Get-PACertificate
+    }
+} else {
+    Write-Output "Creating new certificate for $Domain using Azure DNS for validation (STAGING ENVIRONMENT)"
+    $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $password -Verbose
+}
+
+Write-Output $cert
+# Export the certificate to a PFX file
+
+$pfxFullChainPath = $cert.PfxFullChain
+$certContent = Get-Content -Path $cert.FullChainFile -Raw
+
+Write-Output $certContent
+
+Write-Output "Full Chain certificate generated for $Domain and saved to $pfxFullChainPath"
+
+Write-Output "Importing to kv....."
+# First, mask the password value
+az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file $pfxFullChainPath --password $password
+az keyvault secret set --vault-name kv-adtest-001 --name blog-alexdantico-com-secret --value $password
+
+Write-Output "Done"
