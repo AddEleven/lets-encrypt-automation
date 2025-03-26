@@ -119,7 +119,7 @@ $allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName 
     Sort-Object -Property attributes.created
     
 if ($allVersions.Count -gt 1) {
-    $oldVersions = $allVersions | Select-Object -SkipLast 1
+    $oldVersions = $allVersions | Sort-Object -Property attributes.created | Select-Object -SkipLast 1
     Write-Output "Found $($oldVersions.Count) older versions to disable"
     
     foreach ($version in $oldVersions) {
