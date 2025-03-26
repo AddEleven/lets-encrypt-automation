@@ -69,8 +69,11 @@ Set-PAServer LE_STAGE
 # Set the Posh-ACME configuration
 $account = New-PAAccount -Contact $Email -AcceptTOS -EA SilentlyContinue
 if (-not $account) {
+    Write-Output "NOTTTTT ACCCOUNT"
     $account = Get-PAAccount
 }
+
+Write-Output $account
 
 # Configure the Azure DNS plugin parameters
 $azContext = (az account show | ConvertFrom-Json)
