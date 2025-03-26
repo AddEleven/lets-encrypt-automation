@@ -103,7 +103,7 @@ if ($cert) {
     Write-Output "Importing to Key Vault $KeyVaultName..."
     
     # Import the certificate to Key Vault
-    az keyvault certificate import --vault-name $KeyVaultName --name $CertificateName --file $pfxFullChainPath --password $password --output none
+    $import_out = az keyvault certificate import --vault-name $KeyVaultName --name $CertificateName --file $pfxFullChainPath --password $password --output none
     az keyvault secret set --vault-name $KeyVaultName --name "$CertificateName-secret" --value $password
     
     Write-Output "Certificate successfully imported to Key Vault"
@@ -113,13 +113,14 @@ if ($cert) {
 }
 
 # Get all versions of the certificate except the latest
-$allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
-$latestVersion = $allVersions | Sort-Object -Property attributes.created -Descending | Select-Object -First 1
-$oldVersions = $allVersions | Where-Object { $_.id -ne $latestVersion.id }
+$allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | 
+    ConvertFrom-Json | 
+    Sort-Object -Property attributes.created -Descending | 
+    Select-Object -Skip 1
 
-# Disable all old versions
-foreach ($oldVersion in $oldVersions) {
-    $versionId = $oldVersion.id.Split('/')[-1]
+# Disable all older versions (more efficient one-liner approach)
+foreach ($version in $allVersions) {
+    $versionId = $version.id.Split('/')[-1]
     Write-Output "Disabling old certificate version: $versionId"
     az keyvault certificate set-attributes --vault-name $KeyVaultName --name $CertificateName --version $versionId --enabled false
 }
