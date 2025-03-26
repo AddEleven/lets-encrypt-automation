@@ -69,7 +69,7 @@ jobs:
           Write-Output "111111111111111111111111111111111"
           Write-Output "${{ steps.generate-cert.outputs.unsecure_pw }}"
           Write-Output "${{ steps.generate-cert.outputs.secure_password }}"
-          $plainPassword = [System.Net.NetworkCredential]::new('', $env:secure_password).Password
+          $plainPassword = [System.Net.NetworkCredential]::new('', ${{ steps.generate-cert.outputs.secure_password }}).Password
           
           # Output the plain text password - GitHub Actions will mask secrets automatically
           Write-Output "AAAAAAAAAAAAAAAAAAAEEEEEEEEEEEEE"
