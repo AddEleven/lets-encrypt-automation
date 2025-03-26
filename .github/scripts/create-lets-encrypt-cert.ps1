@@ -91,6 +91,9 @@ $password = -join ((65..90) + (97..122) + (48..57) + (33..47) | Get-Random -Coun
 # Check if a certificate for this domain already exists
 $existingOrder = $null
 $allOrders = Get-PAOrder
+Write-Output "EEEEEEEEEEEEEEEEEEEEEEEEEE"
+Write-Output $allOrders
+
 foreach ($order in $allOrders) {
     # Check the main name of the order
     if ($order.MainDomain -eq $Domain) {
@@ -99,44 +102,44 @@ foreach ($order in $allOrders) {
     }
 }
 
-if ($existingOrder) {
-    Write-Output "Found existing certificate for $Domain, checking if renewal is needed..."
+# if ($existingOrder) {
+#     Write-Output "Found existing certificate for $Domain, checking if renewal is needed..."
     
-    # Select the existing order
-    Set-PAOrder -Order $existingOrder.OrderNumber
+#     # Select the existing order
+#     Set-PAOrder -Order $existingOrder.OrderNumber
     
-    # Check if renewal is needed (30 days before expiry is a good practice)
-    $cert = Get-PACertificate
-    $expiryDate = $cert.NotAfter
-    $renewalDate = $expiryDate.AddDays(-30)
+#     # Check if renewal is needed (30 days before expiry is a good practice)
+#     $cert = Get-PACertificate
+#     $expiryDate = $cert.NotAfter
+#     $renewalDate = $expiryDate.AddDays(-30)
     
-    if ((Get-Date) -ge $renewalDate) {
-        Write-Output "Certificate expires on $expiryDate. Renewal needed."
-        # Submit renewal for the current order
-        $cert = Submit-Renewal -PfxPass $password -Verbose
-    } else {
-        Write-Output "Certificate still valid until $expiryDate. No renewal needed."
-        # We can still get the certificate data
-        $cert = Get-PACertificate
-    }
-} else {
-    Write-Output "Creating new certificate for $Domain using Azure DNS for validation (STAGING ENVIRONMENT)"
-    $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $password -Verbose
-}
+#     if ((Get-Date) -ge $renewalDate) {
+#         Write-Output "Certificate expires on $expiryDate. Renewal needed."
+#         # Submit renewal for the current order
+#         $cert = Submit-Renewal -PfxPass $password -Verbose
+#     } else {
+#         Write-Output "Certificate still valid until $expiryDate. No renewal needed."
+#         # We can still get the certificate data
+#         $cert = Get-PACertificate
+#     }
+# } else {
+#     Write-Output "Creating new certificate for $Domain using Azure DNS for validation (STAGING ENVIRONMENT)"
+#     $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $password -Verbose
+# }
 
-Write-Output $cert
-# Export the certificate to a PFX file
+# Write-Output $cert
+# # Export the certificate to a PFX file
 
-$pfxFullChainPath = $cert.PfxFullChain
-$certContent = Get-Content -Path $cert.FullChainFile -Raw
+# $pfxFullChainPath = $cert.PfxFullChain
+# $certContent = Get-Content -Path $cert.FullChainFile -Raw
 
-Write-Output $certContent
+# Write-Output $certContent
 
-Write-Output "Full Chain certificate generated for $Domain and saved to $pfxFullChainPath"
+# Write-Output "Full Chain certificate generated for $Domain and saved to $pfxFullChainPath"
 
-Write-Output "Importing to kv....."
-# First, mask the password value
-az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file $pfxFullChainPath --password $password
-az keyvault secret set --vault-name kv-adtest-001 --name blog-alexdantico-com-secret --value $password
+# Write-Output "Importing to kv....."
+# # First, mask the password value
+# az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file $pfxFullChainPath --password $password
+# az keyvault secret set --vault-name kv-adtest-001 --name blog-alexdantico-com-secret --value $password
 
-Write-Output "Done"
+# Write-Output "Done"
