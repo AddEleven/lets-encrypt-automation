@@ -89,6 +89,7 @@ $pluginParams = @{
 }
 
 # Generate a random password for the certificate
+Write-Output "::add-mask::$password"
 $password = -join ((65..90) + (97..122) + (48..57) + (33..47) | Get-Random -Count 16 | ForEach-Object {[char]$_})
 
 # Since we're not tracking order state, always create a new certificate when needed
@@ -109,6 +110,18 @@ if ($cert) {
 } else {
     Write-Error "Failed to generate certificate"
     exit 1
+}
+
+# Get all versions of the certificate except the latest
+$allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
+$latestVersion = $allVersions | Sort-Object -Property attributes.created -Descending | Select-Object -First 1
+$oldVersions = $allVersions | Where-Object { $_.id -ne $latestVersion.id }
+
+# Disable all old versions
+foreach ($oldVersion in $oldVersions) {
+    $versionId = $oldVersion.id.Split('/')[-1]
+    Write-Output "Disabling old certificate version: $versionId"
+    az keyvault certificate set-attributes --vault-name $KeyVaultName --name $CertificateName --version $versionId --enabled false
 }
 
 Write-Output "Certificate management process completed"
