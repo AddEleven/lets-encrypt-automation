@@ -80,4 +80,3 @@ Write-Output "::add-mask::$password"
 
 # Then set the output using the recommended approach
 "secure_password=$password" >> $env:GITHUB_OUTPUT
-"unsecure_pw=abcd1234" >> $env:GITHUB_OUTPUT
