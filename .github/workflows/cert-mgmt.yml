@@ -58,7 +58,8 @@ jobs:
             -ResourceGroupName "rg-ad-dns" `
             -DnsZoneName "alexdantico.com" `
             -KeyVaultName "kv-adtest-001" `
-            -CertificateName "blog-alexdantico-com"
+            -CertificateName "blog-alexdantico-com" `
+            -$RenewalThresholdDays 90
         shell: pwsh
 
       # In the step that generates the password:
