@@ -111,28 +111,41 @@ if ($cert) {
     Write-Error "Failed to generate certificate"
     exit 1
 }
-Start-Sleep -Seconds 30
 
-# Get all versions, sort by creation date in DESCENDING order to get newest first
-$allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | 
-    ConvertFrom-Json | 
-    Sort-Object -Property attributes.created -Descending
+# Wait longer for Azure to process the certificate
+Write-Output "Waiting for Azure to process the new certificate..."
+Start-Sleep -Seconds 60
 
-# Get the newest certificate version ID for reference
-$newestCertId = $allVersions[0].id
+# Get the latest certificate directly
+$newCert = az keyvault certificate show --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
+$newCertThumbprint = $newCert.x509Thumbprint
 
-if ($allVersions.Count -gt 1) {
-    # Skip first (newest) certificate and disable all others
-    $oldVersions = $allVersions | Select-Object -Skip 1
-    Write-Output "Found $($oldVersions.Count) older versions to disable"
+Write-Output "New certificate thumbprint: $newCertThumbprint"
+
+# Get all versions
+$allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
+
+# Debug output to see what's being returned
+Write-Output "Found $($allVersions.Count) total certificate versions"
+foreach ($v in $allVersions) {
+    Write-Output "Certificate version: $($v.id.Split('/')[-1]), Created: $($v.attributes.created), Enabled: $($v.attributes.enabled), Thumbprint: $($v.x509Thumbprint)"
+}
+
+# Find and disable old versions that are ENABLED by comparing thumbprints
+$oldVersions = $allVersions | Where-Object { 
+    $_.x509Thumbprint -ne $newCertThumbprint -and $_.attributes.enabled -eq $true 
+}
+
+if ($oldVersions -and $oldVersions.Count -gt 0) {
+    Write-Output "Found $($oldVersions.Count) older ENABLED versions to disable"
     
     foreach ($version in $oldVersions) {
         $versionId = $version.id.Split('/')[-1]
-        Write-Output "Disabling cert with ID: $versionId"
-        az keyvault certificate set-attributes --vault-name $KeyVaultName --name $CertificateName --version $versionId --enabled false
+        Write-Output "Disabling cert with ID: $versionId, Thumbprint: $($version.x509Thumbprint)"
+        az keyvault certificate set-attributes --vault-name $KeyVaultName --name $CertificateName --version $versionId --enabled false --output none
     }
 } else {
-    Write-Output "Only one version found, nothing to disable"
+    Write-Output "No older enabled versions found to disable"
 }
 
 Write-Output "Certificate management process completed"
