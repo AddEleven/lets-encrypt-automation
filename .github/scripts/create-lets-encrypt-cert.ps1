@@ -116,15 +116,19 @@ Start-Sleep -Seconds 30
 # Get all versions of the certificate except the latest
 $allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | 
     ConvertFrom-Json | 
-    Sort-Object -Property attributes.created -Descending | 
-    Select-Object -Skip 1
-
-Write-Output $allVersions
-# Disable all older versions (more efficient one-liner approach)
-foreach ($version in $allVersions) {
-    $versionId = $version.id.Split('/')[-1]
-    Write-Output "Disabling old certificate version: $versionId"
-    az keyvault certificate set-attributes --vault-name $KeyVaultName --name $CertificateName --version $versionId --enabled false
+    Sort-Object -Property attributes.created -Descending
+    
+if ($allVersions.Count -gt 1) {
+    $oldVersions = $allVersions | Select-Object -SkipLast 1
+    Write-Output "Found $($oldVersions.Count) older versions to disable"
+    
+    foreach ($version in $oldVersions) {
+        $versionId = $version.id.Split('/')[-1]
+        Write-Output "Disabling cert with ID: $versionId"
+        az keyvault certificate set-attributes --vault-name $KeyVaultName --name $CertificateName --version $versionId --enabled false
+    }
+} else {
+    Write-Output "Only one version found, nothing to disable"
 }
 
 Write-Output "Certificate management process completed"
