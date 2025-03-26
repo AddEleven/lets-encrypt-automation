@@ -113,13 +113,17 @@ if ($cert) {
 }
 Start-Sleep -Seconds 30
 
-# Get all versions of the certificate except the latest
+# Get all versions, sort by creation date in DESCENDING order to get newest first
 $allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | 
     ConvertFrom-Json | 
-    Sort-Object -Property attributes.created
-    
+    Sort-Object -Property attributes.created -Descending
+
+# Get the newest certificate version ID for reference
+$newestCertId = $allVersions[0].id
+
 if ($allVersions.Count -gt 1) {
-    $oldVersions = $allVersions | Sort-Object -Property attributes.created | Select-Object -SkipLast 1
+    # Skip first (newest) certificate and disable all others
+    $oldVersions = $allVersions | Select-Object -Skip 1
     Write-Output "Found $($oldVersions.Count) older versions to disable"
     
     foreach ($version in $oldVersions) {
