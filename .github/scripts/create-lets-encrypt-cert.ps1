@@ -103,7 +103,7 @@ if ($cert) {
     Write-Output "Importing to Key Vault $KeyVaultName..."
     
     # Import the certificate to Key Vault
-    az keyvault certificate import --vault-name $KeyVaultName --name $CertificateName --file $pfxFullChainPath --password $password
+    az keyvault certificate import --vault-name $KeyVaultName --name $CertificateName --file $pfxFullChainPath --password $password --output none
     az keyvault secret set --vault-name $KeyVaultName --name "$CertificateName-secret" --value $password
     
     Write-Output "Certificate successfully imported to Key Vault"
