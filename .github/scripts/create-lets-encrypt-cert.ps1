@@ -61,22 +61,22 @@ Write-Output $pluginParams
 $password = -join ((65..90) + (97..122) + (48..57) + (33..47) | Get-Random -Count 16 | ForEach-Object {[char]$_})
 
 Write-Output "Creating certificate for $Domain using Azure DNS for validation (STAGING ENVIRONMENT)"
-# $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $password -Verbose
+$cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $password -Verbose
 
-# Write-Output $cert
-# # Export the certificate to a PFX file
+Write-Output $cert
+# Export the certificate to a PFX file
 
-# $pfxFullChainPath = $cert.PfxFullChain
-# $certContent = Get-Content -Path $cert.FullChainFile -Raw
+$pfxFullChainPath = $cert.PfxFullChain
+$certContent = Get-Content -Path $cert.FullChainFile -Raw
 
-# Write-Output $certContent
+Write-Output $certContent
 
-# Write-Output "Full Chain certificate generated fo $Domain and saved to $pfxFullChainPath"
+Write-Output "Full Chain certificate generated fo $Domain and saved to $pfxFullChainPath"
 
-# Write-Output "::set-output name=cert_path::$pfxFullChainPath"
 
+Write-Output "Importing to kv....."
 # First, mask the password value
-Write-Output "::add-mask::$password"
+az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file ${{ steps.generate-cert.outputs.cert_path }} --password $password
+az keyvault secret set --vault-name kv-adtest-001 --name blog-alexdantico-com-secret --value $password
 
-# Then set the output using the recommended approach
-"secure_password=$password" >> $env:GITHUB_OUTPUT
+Write-Output "Done"
