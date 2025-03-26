@@ -116,7 +116,7 @@ Start-Sleep -Seconds 30
 # Get all versions of the certificate except the latest
 $allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | 
     ConvertFrom-Json | 
-    Sort-Object -Property attributes.created -Descending
+    Sort-Object -Property attributes.created -Ascending
     
 if ($allVersions.Count -gt 1) {
     $oldVersions = $allVersions | Select-Object -SkipLast 1
