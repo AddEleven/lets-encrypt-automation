@@ -59,7 +59,7 @@ jobs:
             -DnsZoneName "alexdantico.com" `
             -KeyVaultName "kv-adtest-001" `
             -CertificateName "blog-alexdantico-com" `
-            -$RenewalThresholdDays 90
+            -RenewalThresholdDays 90
         shell: pwsh
 
       # In the step that generates the password:
