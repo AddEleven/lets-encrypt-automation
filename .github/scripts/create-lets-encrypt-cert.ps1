@@ -104,7 +104,7 @@ if ($cert) {
     
     # Import the certificate to Key Vault
     $import_out = az keyvault certificate import --vault-name $KeyVaultName --name $CertificateName --file $pfxFullChainPath --password $password --output none
-    az keyvault secret set --vault-name $KeyVaultName --name "$CertificateName-secret" --value $password
+    #az keyvault secret set --vault-name $KeyVaultName --name "$CertificateName-secret" --value $password
     
     Write-Output "Certificate successfully imported to Key Vault"
 } else {
