@@ -57,5 +57,5 @@ jobs:
             -Domain "${{ vars.DOMAIN_NAME }}" `
             -DnsZoneName "${{ vars.AZURE_DNS_ZONE_NAME }}" `
             -KeyVaultName "${{ secrets.KEY_VAULT_RESOURCE_NAME }}" `
-            -RenewalThresholdDays 90
+            -RenewalThresholdDays 30
         shell: pwsh
