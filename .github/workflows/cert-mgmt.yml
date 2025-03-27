@@ -1,6 +1,4 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI
+name: Generate-Lets-Encrypt-Certificate
 
 # Controls when the workflow will run
 on:
@@ -52,13 +50,10 @@ jobs:
             AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         run: |
           ./.github/scripts/create-lets-encrypt-cert.ps1 `
-            -Email "alex@alexdantico.com" `
-            -Domain "blog.alexdantico.com" `
-            -ContactEmail "alex@alexdantico.com" `
-            -ResourceGroupName "rg-ad-dns" `
-            -DnsZoneName "alexdantico.com" `
-            -KeyVaultName "kv-adtest-001" `
-            -CertificateName "blog-alexdantico-com" `
+            -Email "${{ secrets.LETS_ENCRYPT_EMAIL }}" `
+            -Domain "${{ vars.DOMAIN_NAME }}" `
+            -DnsZoneName "${{ vars.AZURE_DNS_ZONE_NAME }}" `
+            -KeyVaultName "${{ secrets.KEY_VAULT_RESOURCE_NAME }}" `
             -RenewalThresholdDays 90
         shell: pwsh
 
