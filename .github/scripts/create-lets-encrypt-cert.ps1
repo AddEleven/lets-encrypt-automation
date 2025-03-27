@@ -96,7 +96,7 @@ if ($cert) {
     $pfxFullChainPath = $cert.PfxFullChain
     
     Write-Output "Full Chain certificate generated for $Domain and saved to $pfxFullChainPath"
-    Write-Output "Importing to Key Vault $KeyVaultName..."
+    Write-Output "Importing $certificateName to Key Vault $KeyVaultName..."
     
     # Import the certificate to Key Vault
     $import_out = az keyvault certificate import --vault-name $KeyVaultName --name $certificateName --file $pfxFullChainPath --password $password --output none
