@@ -9,10 +9,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-        env:
-          description: 'Name of the person to greet'
-          required: true
-          default: 'Staging'
+        useStaging:
+          description: 'Use Lets Encrypt staging environment (for testing)'
+          required: false
+          type: boolean
+          default: false
 
 permissions:
   id-token: write
@@ -49,6 +50,9 @@ jobs:
             AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
             AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         run: |
+          # Default to PROD unless explicitly set to use staging
+          $acmeEnv = if ('${{ github.event.inputs.useStaging }}' -eq 'true') { 'LE_STAGE' } else { 'LE_PROD' }
+          
           ./.github/scripts/create-lets-encrypt-cert.ps1 `
             -Email "${{ secrets.LETS_ENCRYPT_EMAIL }}" `
             -Domain "${{ vars.DOMAIN_NAME }}" `
