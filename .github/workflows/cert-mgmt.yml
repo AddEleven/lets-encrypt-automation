@@ -56,14 +56,3 @@ jobs:
             -KeyVaultName "${{ secrets.KEY_VAULT_RESOURCE_NAME }}" `
             -RenewalThresholdDays 90
         shell: pwsh
-
-      # In the step that generates the password:
-    
-      # - name: Use Certificate in Next Step
-      #   run: |
-      #     echo "Certificate is at: ${{ steps.generate-cert.outputs.cert_path }}"
-      #     # Use the certificate file directly in your next step
-      #     # For example, you could upload it to Key Vault:
-      #     echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-      #     echo ${{ steps.generate-cert.outputs.secure_password }}
-      #     #az keyvault certificate import --vault-name kv-adtest-001 --name blog-alexdantico-com --file ${{ steps.generate-cert.outputs.cert_path }} --password securePassword123
