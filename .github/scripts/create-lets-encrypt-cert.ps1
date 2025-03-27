@@ -33,7 +33,7 @@ Import-Module Posh-ACME
 $certExists = $false
 $needsRenewal = $false
 
-$certificateName = "cert-" + ($DomainName -replace '\.', '-')
+$certificateName = "cert-" + ($Domain -replace '\.', '-')
 try {
     $certInfo = az keyvault certificate show --vault-name $KeyVaultName --name $certificateName | ConvertFrom-Json
     if ($certInfo) {
