@@ -6,19 +6,13 @@ param (
     [string]$Domain,
 
     [Parameter(Mandatory=$true)]
-    [string]$ContactEmail,
-
+    [string]$KeyVaultName,
+    
     [Parameter(Mandatory=$true)]
     [string]$ResourceGroupName,
 
     [Parameter(Mandatory=$true)]
     [string]$DnsZoneName,
-    
-    [Parameter(Mandatory=$true)]
-    [string]$KeyVaultName,
-    
-    [Parameter(Mandatory=$true)]
-    [string]$CertificateName,
     
     [int]$RenewalThresholdDays = 30
 )
@@ -38,8 +32,9 @@ Import-Module Posh-ACME
 $certExists = $false
 $needsRenewal = $false
 
+$certificateName = "cert-" + ($DomainName -replace '\.', '-')
 try {
-    $certInfo = az keyvault certificate show --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
+    $certInfo = az keyvault certificate show --vault-name $KeyVaultName --name $certificateName | ConvertFrom-Json
     if ($certInfo) {
         $certExists = $true
         
@@ -47,7 +42,7 @@ try {
         $expiryDate = [DateTime]$certInfo.attributes.expires
         $daysUntilExpiry = ($expiryDate - (Get-Date)).Days
         
-        Write-Output "Certificate '$CertificateName' found in Key Vault."
+        Write-Output "Certificate '$certificateName' found in Key Vault."
         Write-Output "Certificate expires on: $expiryDate (in $daysUntilExpiry days)"
         
         if ($daysUntilExpiry -le $RenewalThresholdDays) {
@@ -103,8 +98,8 @@ if ($cert) {
     Write-Output "Importing to Key Vault $KeyVaultName..."
     
     # Import the certificate to Key Vault
-    $import_out = az keyvault certificate import --vault-name $KeyVaultName --name $CertificateName --file $pfxFullChainPath --password $password --output none
-    #az keyvault secret set --vault-name $KeyVaultName --name "$CertificateName-secret" --value $password
+    $import_out = az keyvault certificate import --vault-name $KeyVaultName --name $certificateName --file $pfxFullChainPath --password $password --output none
+    #az keyvault secret set --vault-name $KeyVaultName --name "$certificateName-secret" --value $password
     
     Write-Output "Certificate successfully imported to Key Vault"
 } else {
@@ -117,7 +112,7 @@ Write-Output "Waiting for Azure to process the new certificate..."
 Start-Sleep -Seconds 60
 
 # Get the latest certificate directly
-$newCert = az keyvault certificate show --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
+$newCert = az keyvault certificate show --vault-name $KeyVaultName --name $certificateName | ConvertFrom-Json
 $newCertThumbprint = $newCert.x509Thumbprint
 $versionId = $newCert.id.Split('/')[-1]
 
@@ -125,7 +120,7 @@ Write-Output "New certificate thumbprint: $newCertThumbprint"
 Write-Output "New certificate version ID: $versionId"
 
 # Get all versions
-$allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $CertificateName | ConvertFrom-Json
+$allVersions = az keyvault certificate list-versions --vault-name $KeyVaultName --name $certificateName | ConvertFrom-Json
 
 # Debug output to see what's being returned
 Write-Output "Found $($allVersions.Count) total certificate versions"
@@ -144,7 +139,7 @@ if ($oldVersions -and $oldVersions.Count -gt 0) {
     foreach ($version in $oldVersions) {
         $versionId = $version.id.Split('/')[-1]
         Write-Output "Disabling cert with ID: $versionId, Thumbprint: $($version.x509Thumbprint)"
-        az keyvault certificate set-attributes --vault-name $KeyVaultName --name $CertificateName --version $versionId --enabled false --output none
+        az keyvault certificate set-attributes --vault-name $KeyVaultName --name $certificateName --version $versionId --enabled false --output none
     }
 } else {
     Write-Output "No older enabled versions found to disable"
