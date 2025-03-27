@@ -10,6 +10,10 @@ param (
 
     [Parameter(Mandatory=$true)]
     [string]$DnsZoneName,
+
+    [Parameter()]
+    [ValidateSet('LE_STAGE', 'LE_PROD')]
+    [string]$AcmeEnvironment = 'LE_STAGE',
     
     [int]$RenewalThresholdDays = 30
 )
@@ -60,7 +64,7 @@ try {
 
 # If we reached here, we either need to create a new certificate or renew an existing one
 # Set the Let's Encrypt server to use
-Set-PAServer LE_STAGE
+Set-PAServer $AcmeEnvironment
 
 # Create a new ACME account or use existing one
 $account = New-PAAccount -Contact $Email -AcceptTOS -EA SilentlyContinue
