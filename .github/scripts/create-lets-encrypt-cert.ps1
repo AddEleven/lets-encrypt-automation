@@ -7,9 +7,6 @@ param (
 
     [Parameter(Mandatory=$true)]
     [string]$KeyVaultName,
-    
-    [Parameter(Mandatory=$true)]
-    [string]$ResourceGroupName,
 
     [Parameter(Mandatory=$true)]
     [string]$DnsZoneName,
