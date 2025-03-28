@@ -2,7 +2,7 @@
 
 I recently set up an Azure App Service with an Application Gateway frontend. Everything was working smoothly with Azure App Service managed certificates (Microsoft Docs) until I hit a major roadblock: you can't export these certificates, making them completely useless for integrating with Azure App Gateway's TLS requirements. 
 
-Looking for alternatives, I investigated other Azure certificate solutions like Key Vault generated certificates (Microsoft Docs) and Azure App Service certificates (Microsoft Docs). One look at the pricing and—being the frugal engineer that I am (read: cheap bastard)—I immediately started searching for more cost-effective options.
+Looking for alternatives, I investigated other Azure certificate solutions like Key Vault generated certificates (Microsoft Docs) and Azure App Service certificates (Microsoft Docs). Once I looked at the pricing and—being the frugal engineer that I am (read: cheap bastard)—I immediately started searching for more cost-effective options.
 
 Enter Let's Encrypt: offering essentially the same security features as paid certificates, but completely free. The only downside? A slightly more complex management process. But that's exactly what led me to create this solution. In this post, I'll walk you through my certificate selection journey (spoiler alert: Let's Encrypt wins) and share the open-source automation solution I built to make the entire process painless.
 
