@@ -9,7 +9,6 @@ This repository contains an automated solution for creating, renewing, and manag
 - 🔄 **Automated renewals** - Runs on the 1st and 15th of every month
 - 🔒 **Secure storage** - Certificates stored in Azure Key Vault
 - 🔍 **DNS validation** - Uses Azure DNS for domain ownership validation
-- 🧪 **Testing support** - Optional staging environment for testing without rate limits
 - 🔄 **Version management** - Automatically disables old certificate versions
 
 ## Prerequisites
