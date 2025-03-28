@@ -82,8 +82,8 @@ The workflow uses the following permissions:
    - Generates a Full Chain PFX certificate
 
 4. **Key Vault Storage**
-   - Imports certificate to Key Vault with generated name: `cert-*domain-name*`
-   - Example: `cert-*app-example-com*`
+   - Imports certificate to Key Vault with generated name: `cert-{domain-name}`
+   - Example: `cert-{app-example-com}`
 
 5. **Version Management**
    - Identifies the newly imported certificate
