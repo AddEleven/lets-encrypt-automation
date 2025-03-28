@@ -22,54 +22,9 @@ The solution consists of a GitHub Actions workflow that runs on a schedule, and 
 
 ### Comparing with Other Azure Certificate Options
 
-#### 1. Azure App Service Managed Certificates
-
-**App Service Managed Certificates Pros:**
-- Zero cost
-- Built into App Service
-- Simple setup
-
-**Why My Solution Might Be Better:**
-- **Multi-service usage:** App Service Managed Certificates only work with App Service
-- **Wildcard support:** My solution supports wildcard certificates, which Managed Certificates don't
-- **Full control:** Complete visibility into the certificate lifecycle
-- **More domains:** Can manage more than the App Service limit
-
-#### 2. Azure App Service Certificates
-
-**App Service Certificates Pros:**
-- Microsoft-managed renewals
-- Integration with Azure services
-
-**Why My Solution Might Be Better:**
-- **Cost savings:** Let's Encrypt is free vs. $70-$300+ annually for App Service Certificates
-- **Flexibility:** Not tied to App Service specifically
-- **Transparency:** Full visibility into renewal process
-- **No approval delays:** Automated issuance without manual steps
-
-#### 3. Key Vault Generated Certificates
-
-**Key Vault Generated Certificates Pros:**
-- Integrated with Azure ecosystem
-- Managed by Microsoft
-
-**Why My Solution Might Be Better:**
-- **Cost efficiency:** Significant savings over paid certificates
-- **Automated renewals:** No need for manual certificate rotation
-- **Industry standard:** Uses well-established ACME protocol
-
-### Cost Considerations
-
-Let's talk real numbers:
-
-- **Let's Encrypt:** $0 per certificate
-- **App Service Managed Certificates:** $0 but limited to App Service
-- **Standard SSL Certificate:** $70-$1000+ per year depending on type
-- **Wildcard Certificate:** $300-$1000+ per year
-
-For an organization with dozens of certificates, the annual savings can easily reach thousands of dollars.
-
-### Security Factors
+DV: Domain Validation - Verifies domain ownership only
+OV: Organization Validation - Verifies organization information
+EV: Extended Validation - Highest level of validation, shows organization name in browser
 
 A common question: "Are Let's Encrypt certificates as secure as traditional CA certificates?"
 
@@ -92,16 +47,6 @@ The primary difference is the 90-day validity period (vs 1+ years for paid certi
 4. **Consistent Process:** Same approach works across environments
 5. **Scalability:** Easily manage certificates for dozens or hundreds of domains
 
-## Real World Applications
-
-This solution works especially well for:
-
-- Organizations with many microservices requiring separate certificates
-- DevOps teams managing multiple environments
-- Applications using Azure services beyond just App Service
-- Scenarios requiring wildcard certificates without large expenditures
-- Projects with strict cost controls but high security requirements
-
 ## Future Enhancements
 
 I'm planning to enhance this solution with Azure Storage for state management, which will add:
@@ -109,6 +54,9 @@ I'm planning to enhance this solution with Azure Storage for state management, w
 - Certificate history for audit purposes
 - Rate limit prevention mechanisms
 - Cross-run consistency for edge cases
+
+
+## Walkthrough of pipeline
 
 ## Conclusion
 
