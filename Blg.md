@@ -1,6 +1,8 @@
 # Automating Let's Encrypt Certificate Management with GitHub Actions and Azure
 
-In today's cloud-first world, managing SSL/TLS certificates efficiently is crucial for maintaining secure applications. I recently created an open-source solution that automates Let's Encrypt certificate generation and renewal using GitHub Actions and Azure services, and I'd like to share why this approach offers significant benefits for many scenarios.
+I recently set up an Azure App Service with an Application Gateway frontend. Everything was working smoothly with Azure App Service managed certificates (Microsoft Docs) until I hit a major roadblock: you can't export these certificates, making them completely useless for integrating with Azure App Gateway's TLS requirements. Looking for alternatives, I investigated other Azure certificate solutions like Key Vault generated certificates (Microsoft Docs) and Azure App Service certificates (Microsoft Docs). One look at the pricing and—being the frugal engineer that I am (read: cheap bastard)—I immediately started searching for more cost-effective options.
+
+Enter Let's Encrypt: offering essentially the same security features as paid certificates, but completely free. The only downside? A slightly more complex management process. But that's exactly what led me to create this solution. In this post, I'll walk you through my certificate selection journey (spoiler alert: Let's Encrypt wins) and share the open-source automation solution I built to make the entire process painless.
 
 ## What My Solution Does
 
