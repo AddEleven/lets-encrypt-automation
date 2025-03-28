@@ -117,6 +117,37 @@ Certificates are automatically renewed when they're within 30 days of expiry. No
 4. Optionally select "Use Lets Encrypt staging environment" for testing
 5. Click "Run workflow"
 
+## Future Development: Azure Storage State Management
+
+### Why State Management Matters
+
+Currently, this solution relies on checking Azure Key Vault for certificate information. A more robust approach would be to implement dedicated state management using Azure Storage:
+
+- 🔄 **Persistent Order Tracking** - Store ACME order IDs and challenge responses
+- 🏗️ **Certificate History** - Track renewal cycles and past validation issues
+- ⚠️ **Rate Limit Prevention** - Monitor and respect Let's Encrypt rate limits
+- 🔁 **Cross-Run Consistency** - Share state between workflow executions
+
+### Implementation Plan
+
+1. Create an Azure Storage Account table to store:
+   - Domain registration status
+   - Challenge verification details
+   - Order IDs and account keys
+   - Renewal history
+
+2. Update the certificate script to:
+   - Read previous state before operations
+   - Store outcomes after operations
+   - Handle edge cases more gracefully
+
+3. Benefits:
+   - Improved reliability when DNS validation is delayed
+   - Better handling of partial failures
+   - Historical data for troubleshooting
+
+This enhancement would make the solution more enterprise-ready and resilient against intermittent failures.
+
 ## Troubleshooting
 
 ### Common Issues
