@@ -71,6 +71,7 @@ try {
 
 # If we reached here, we either need to create a new certificate or renew an existing one
 # Set the Let's Encrypt server to use
+Write-Output "Using ACME Environment: $AcmeEnvironment"
 Set-PAServer $AcmeEnvironment
 
 # Create a new ACME account or use existing one
