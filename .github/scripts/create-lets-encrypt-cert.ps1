@@ -97,7 +97,7 @@ Write-Output "::add-mask::$password"
 $password = -join ((65..90) + (97..122) + (48..57) + (33..47) | Get-Random -Count 16 | ForEach-Object {[char]$_})
 
 # Since we're not tracking order state, always create a new certificate when needed
-Write-Output "Creating new certificate for $Domain using Azure DNS for validation (STAGING ENVIRONMENT)"
+Write-Output "Creating new certificate for $Domain using Azure DNS for validation ($AcmeEnvironment ENVIRONMENT)"
 $cert = New-PACertificate -Domain $Domain -DnsPlugin Azure -PluginArgs $pluginParams -PfxPass $password -Verbose
 
 if ($cert) {
