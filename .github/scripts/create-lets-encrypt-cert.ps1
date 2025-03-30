@@ -39,21 +39,28 @@ try {
     if ($certInfo) {
         $certExists = $true
         
-        # Get expiration date and determine if renewal is needed
-        $expiryDate = [DateTime]$certInfo.attributes.expires
-        $daysUntilExpiry = ($expiryDate - (Get-Date)).Days
-        
-        Write-Output "Certificate '$certificateName' found in Key Vault."
-        Write-Output "Certificate expires on: $expiryDate (in $daysUntilExpiry days)"
-        
-        if ($daysUntilExpiry -le $RenewalThresholdDays) {
-            Write-Output "Certificate will expire within $RenewalThresholdDays days. Renewal needed."
+        # Check if certificate is enabled, if not we need to renew
+        if ($certInfo.attributes.enabled -ne $true) {
+            Write-Output "Certificate '$certificateName' found but is disabled. Renewal needed."
             $needsRenewal = $true
-        } else {
-            Write-Output "Certificate is still valid for more than $RenewalThresholdDays days. No renewal needed."
-            # Exit early if no renewal is needed
-            Write-Output "No action needed. Exiting."
-            exit 0
+        }
+        else {
+            # Get expiration date and determine if renewal is needed
+            $expiryDate = [DateTime]$certInfo.attributes.expires
+            $daysUntilExpiry = ($expiryDate - (Get-Date)).Days
+            
+            Write-Output "Certificate '$certificateName' found in Key Vault (Enabled: $($certInfo.attributes.enabled))."
+            Write-Output "Certificate expires on: $expiryDate (in $daysUntilExpiry days)"
+            
+            if ($daysUntilExpiry -le $RenewalThresholdDays) {
+                Write-Output "Certificate will expire within $RenewalThresholdDays days. Renewal needed."
+                $needsRenewal = $true
+            } else {
+                Write-Output "Certificate is still valid for more than $RenewalThresholdDays days. No renewal needed."
+                # Exit early if no renewal is needed
+                Write-Output "No action needed. Exiting."
+                exit 0
+            }
         }
     }
 } catch {
