@@ -55,6 +55,8 @@ I'm planning to enhance this solution with Azure Storage for state management, w
 - Rate limit prevention mechanisms
 - Cross-run consistency for edge cases
 
+## EXTRA - configuring Azure App service with an Application Gateway frontend
+Finally I will quickly show a setup of an Azure App service, using the Let's encrypt certificate from Key Vault with an Azure App gateway frontend. There are some weird nuances with this setup which took me a bit to understand so hopefully reading this saves you some time. 
 
 ## Walkthrough of pipeline
 
