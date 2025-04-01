@@ -53,5 +53,5 @@ jobs:
             -DnsZoneName "${{ vars.AZURE_DNS_ZONE_NAME }}" `
             -KeyVaultName "${{ secrets.KEY_VAULT_RESOURCE_NAME }}" `
             -AcmeEnvironment $acmeEnv `
-            -RenewalThresholdDays 100
+            -RenewalThresholdDays 30
         shell: pwsh
