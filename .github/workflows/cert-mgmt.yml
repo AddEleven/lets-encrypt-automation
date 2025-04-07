@@ -1,10 +1,11 @@
 name: Generate-Lets-Encrypt-Certificate
 
+# Comment this out because I don't want this continiously running for now.
+# on:
+#   # Run every 30 days (halfway through 90-day validity period)
+#   schedule:
+#     - cron: '0 0 1,15 * *'  # Runs 1st and 15th of each month
 on:
-  # Run every 30 days (halfway through 90-day validity period)
-  schedule:
-    - cron: '0 0 1,15 * *'  # Runs 1st and 15th of each month
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
